@@ -92,7 +92,7 @@ Below is the recommended implementation order for building this system:
 
 ### 8. 🧪 Testing & CI/CD
 - Write unit and integration tests for each app
-- Add GitHub Actions or GitLab CI
+- Add GitHub Actions
 - Automate Docker builds and deployment
 
 ### 9. 🖼️ Frontend (React - Later Phase)
