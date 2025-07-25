@@ -23,7 +23,7 @@ TENANT_APPS = [
     'apps.core',
     'apps.users',
     'apps.students',
-    'apps.'
+    'apps.s'
     # Add other tenant-specific apps here, e.g. 'users', 'students', etc.
 ]
 
