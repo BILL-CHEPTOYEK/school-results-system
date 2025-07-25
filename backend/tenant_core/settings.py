@@ -24,7 +24,7 @@ TENANT_APPS = [
     'apps.users',
     'apps.students',
     'apps.results',
-    # Add other tenant-specific apps here, e.g. 'users', 'students', etc.
+    # Add other tenant-specific apps 
 ]
 
 # Combine for INSTALLED_APPS
