@@ -1,8 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import User, Role, UserRole
-from .serializers import UserSerializer, RoleSerializer, UserRoleSerializer
+from .models import User, Role, UserRole, Permission, UserPermission, RolePermission
+from .serializers import UserSerializer, RoleSerializer, UserRoleSerializer, PermissionSerializer, UserPermissionSerializer, RolePermissionSerializer
 from rest_framework import generics, permissions
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import get_user_model
@@ -82,3 +82,15 @@ class PasswordChangeView(APIView):
         user.set_password(new_password)
         user.save()
         return Response({'success': 'Password changed successfully.'})
+
+class PermissionViewSet(viewsets.ModelViewSet):
+    queryset = Permission.objects.all()
+    serializer_class = PermissionSerializer
+
+class UserPermissionViewSet(viewsets.ModelViewSet):
+    queryset = UserPermission.objects.all()
+    serializer_class = UserPermissionSerializer
+
+class RolePermissionViewSet(viewsets.ModelViewSet):
+    queryset = RolePermission.objects.all()
+    serializer_class = RolePermissionSerializer
