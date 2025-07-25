@@ -1,7 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import User, Role, UserRole, Permission, UserPermission, RolePermission
+from .models import User, Role, UserRole
+from .permissions import Permission, UserPermission, RolePermission
 from .serializers import UserSerializer, RoleSerializer, UserRoleSerializer, PermissionSerializer, UserPermissionSerializer, RolePermissionSerializer
 from rest_framework import generics, permissions
 from django.contrib.auth.tokens import default_token_generator
