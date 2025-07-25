@@ -40,7 +40,7 @@ project-root/
 │   │   └── core/
 │   └── media/
 │
-├── frontend/                 # Placeholder for React frontend (to be implemented)
+├── frontend/                 
 │   └── ...
 │
 ├── docker-compose.yml
