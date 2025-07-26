@@ -1,3 +1,7 @@
+from django.http import JsonResponse
+
+def test_view(request):
+    return JsonResponse({'status': 'ok'})
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
