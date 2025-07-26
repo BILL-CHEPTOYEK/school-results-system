@@ -1,6 +1,6 @@
 // src/services/api.js
 
-const API_BASE = import.meta.env.VITE_API_BASE || window.location.origin;
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
 
 export function getToken() {
     return localStorage.getItem('token');
