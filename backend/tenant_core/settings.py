@@ -31,6 +31,8 @@ TENANT_APPS = [
 
 # Combine for INSTALLED_APPS
 INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))
+# Add CORS support
+INSTALLED_APPS += ['corsheaders']
 
 # django-tenants specific settings
 TENANT_MODEL = "core.Client"  # app_label.ModelName
@@ -38,8 +40,8 @@ TENANT_DOMAIN_MODEL = "core.Domain"
 
 # Add django-tenants middleware at the top
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django_tenants.middleware.main.TenantMainMiddleware',
-    # ...existing code...
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -47,6 +49,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+# CORS settings for frontend access
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
 ]
 from pathlib import Path
 from decouple import config, Csv
