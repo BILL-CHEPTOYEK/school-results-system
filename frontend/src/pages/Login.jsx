@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import api from '../services/api';
 
 export default function Login({ onLogin }) {
     const [username, setUsername] = useState('');
@@ -13,21 +12,26 @@ export default function Login({ onLogin }) {
         setLoading(true);
         setError('');
         try {
-            const data = await api.post('/api/token/', { username, password });
-            if (data.access) {
+            const response = await fetch('/api/token/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            const data = await response.json();
+            if (response.ok && data.access) {
                 onLogin(data.access);
             } else {
                 setError(data.detail || 'Login failed');
             }
         } catch (err) {
-            setError(err.detail || 'Network error');
+            setError('Network error');
         }
         setLoading(false);
     };
 
     return (
         <div className="min-h-screen w-full flex items-center justify-center relative" style={{
-            backgroundImage: "url('/assets/login.jpg')",
+            backgroundImage: "url('/src/assets/login.jpg')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
@@ -40,7 +44,7 @@ export default function Login({ onLogin }) {
                     {/* Left: Branding */}
                     <div className="hidden lg:flex flex-col justify-center w-full lg:w-1/2 bg-gradient-to-br from-blue-600/85 to-blue-900/95 p-8 relative">
                         <div className="absolute inset-0">
-                            <img src="/assets/login.jpg" alt="School" className="object-cover w-full h-full opacity-30" />
+                            <img src="/src/assets/login.jpg" alt="School" className="object-cover w-full h-full opacity-30" />
                             <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-blue-800/70 to-blue-700/60" />
                         </div>
                         <div className="relative z-10 p-8">
