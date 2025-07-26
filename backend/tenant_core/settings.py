@@ -46,7 +46,7 @@ INSTALLED_APPS += ['corsheaders']
 TENANT_MODEL = "core.Client"  # app_label.ModelName
 TENANT_DOMAIN_MODEL = "core.Domain"
 
-# Add django-tenants middleware at the top
+# Add django-tenants and CORS middleware at the top
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django_tenants.middleware.main.TenantMainMiddleware',
@@ -76,15 +76,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
 
 
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+## REMOVE DUPLICATE MIDDLEWARE LIST
 
 ROOT_URLCONF = 'tenant_core.urls'
 
