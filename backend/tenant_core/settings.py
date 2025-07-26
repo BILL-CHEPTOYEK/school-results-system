@@ -1,21 +1,11 @@
-# CORS settings for frontend access
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = ['*']
-CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
-# django-tenants database router
 DATABASE_ROUTERS = (
     'django_tenants.routers.TenantSyncRouter',
 )
-# django-tenants settings
 
 # Shared apps (always present in public and tenant schemas)
 SHARED_APPS = [
     'django_tenants',
-    'apps.core',  # core must be in both shared and tenant apps for tenant model
+    'apps.core',
     'apps.users',
     'apps.students',
     'django.contrib.contenttypes',
@@ -34,19 +24,17 @@ TENANT_APPS = [
     'apps.results',
     'apps.reports',
     'apps.analytics',
-    # Add other tenant-specific apps here
 ]
 
 # Combine for INSTALLED_APPS
 INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))
-# Add CORS support
 INSTALLED_APPS += ['corsheaders']
 
 # django-tenants specific settings
-TENANT_MODEL = "core.Client"  # app_label.ModelName
+TENANT_MODEL = "core.Client"
 TENANT_DOMAIN_MODEL = "core.Domain"
 
-# Add django-tenants and CORS middleware at the top
+# MIDDLEWARE (single definition, tenant and CORS at top)
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django_tenants.middleware.main.TenantMainMiddleware',
@@ -58,10 +46,15 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-# CORS settings for frontend access
+
+# CORS settings
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
 from pathlib import Path
 from decouple import config, Csv
 
