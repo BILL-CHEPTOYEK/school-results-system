@@ -30,19 +30,19 @@ export default function Login({ onLogin }) {
     };
 
     return (
-    <div className="min-h-screen w-full relative" style={{
-      backgroundImage: `url('src/assets/login.jpg')`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      backgroundAttachment: 'fixed'
-    }}>
+        <div className="min-h-screen w-full flex items-center justify-center relative" style={{
+            backgroundImage: "url('/src/assets/login.jpg')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundAttachment: 'fixed'
+        }}>
             {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 via-blue-800/40 to-blue-700/60 backdrop-blur-[2px]" />
-            <div className="flex items-center justify-center min-h-screen p-4 relative z-10">
-                <div className="flex w-full max-w-4xl overflow-hidden bg-white shadow-2xl rounded-2xl">
+            <div className="relative z-10 w-full flex items-center justify-center min-h-screen p-4">
+                <div className="flex flex-col lg:flex-row w-full max-w-4xl overflow-hidden bg-white shadow-2xl rounded-2xl">
                     {/* Left: Branding */}
-                    <div className="hidden lg:flex flex-col justify-center w-1/2 bg-gradient-to-br from-blue-600/85 to-blue-900/95 p-8 relative">
+                    <div className="hidden lg:flex flex-col justify-center w-full lg:w-1/2 bg-gradient-to-br from-blue-600/85 to-blue-900/95 p-8 relative">
                         <div className="absolute inset-0">
                             <img src="/school-bg.jpg" alt="School" className="object-cover w-full h-full opacity-30" />
                             <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-blue-800/70 to-blue-700/60" />
