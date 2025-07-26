@@ -13,7 +13,7 @@ export default function Login({ onLogin }) {
         setLoading(true);
         setError('');
         try {
-            const data = await api.post('/api/token/', { username, password });
+            const data = await api.post('/api/auth/token/', { username, password });
             if (data.access) {
                 onLogin(data.access);
             } else {
