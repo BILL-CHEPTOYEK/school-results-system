@@ -17,7 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from django.http import JsonResponse
+
+def root_status(request):
+    return JsonResponse({'status': 'okay'})
+
 urlpatterns = [
+    path('', root_status),
     path('admin/', admin.site.urls),
     path('api/auth/', include('apps.users.jwt_urls')),
     path('api/auth/', include('apps.users.password_urls')),

@@ -36,10 +36,8 @@ INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))
 TENANT_MODEL = "core.Client"  # app_label.ModelName
 TENANT_DOMAIN_MODEL = "core.Domain"
 
-# Add django-tenants middleware at the top
 MIDDLEWARE = [
     'django_tenants.middleware.main.TenantMainMiddleware',
-    # ...existing code...
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -59,7 +57,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
+ALLOWED_HOSTS = ['schoolone.localhost', 'localhost', '127.0.0.1']
 
 
 MIDDLEWARE = [
