@@ -1,37 +1,35 @@
-import { useState } from 'react';
-import Login from './pages/Login';
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
 
 function App() {
-  const [token, setToken] = useState(localStorage.getItem('token') || null);
-
-  const handleLogin = (jwt) => {
-    setToken(jwt);
-    localStorage.setItem('token', jwt);
-  };
-
-  const handleLogout = () => {
-    setToken(null);
-    localStorage.removeItem('token');
-  };
-
-  if (!token) {
-    return <Login onLogin={handleLogin} />;
-  }
+  const [count, setCount] = useState(0)
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-      <div className="bg-white p-8 rounded shadow w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4">Welcome</h1>
-        <p className="mb-6">You are logged in.</p>
-        <button
-          onClick={handleLogout}
-          className="w-full bg-red-600 text-white py-2 rounded font-semibold hover:bg-red-700"
-        >
-          Logout
-        </button>
+    <>
+      <div>
+        <a href="https://vite.dev" target="_blank">
+          <img src={viteLogo} className="logo" alt="Vite logo" />
+        </a>
+        <a href="https://react.dev" target="_blank">
+          <img src={reactLogo} className="logo react" alt="React logo" />
+        </a>
       </div>
-    </div>
-  );
+      <h1>Vite + React</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+        </button>
+        <p>
+          Edit <code>src/App.jsx</code> and save to test HMR
+        </p>
+      </div>
+      <p className="read-the-docs">
+        Click on the Vite and React logos to learn more
+      </p>
+    </>
+  )
 }
 
-export default App;
+export default App

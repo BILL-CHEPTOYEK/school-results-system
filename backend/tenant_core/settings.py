@@ -1,11 +1,13 @@
+# django-tenants database router
 DATABASE_ROUTERS = (
     'django_tenants.routers.TenantSyncRouter',
 )
+# django-tenants settings
 
 # Shared apps (always present in public and tenant schemas)
 SHARED_APPS = [
     'django_tenants',
-    'apps.core',
+    'apps.core',  # core must be in both shared and tenant apps for tenant model
     'apps.users',
     'apps.students',
     'django.contrib.contenttypes',
@@ -24,20 +26,20 @@ TENANT_APPS = [
     'apps.results',
     'apps.reports',
     'apps.analytics',
+    # Add other tenant-specific apps here
 ]
 
 # Combine for INSTALLED_APPS
 INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))
-INSTALLED_APPS += ['corsheaders']
 
 # django-tenants specific settings
-TENANT_MODEL = "core.Client"
+TENANT_MODEL = "core.Client"  # app_label.ModelName
 TENANT_DOMAIN_MODEL = "core.Domain"
 
-# MIDDLEWARE (single definition, tenant and CORS at top)
+# Add django-tenants middleware at the top
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django_tenants.middleware.main.TenantMainMiddleware',
+    # ...existing code...
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -46,15 +48,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-# CORS settings
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = ['*']
-CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
 from pathlib import Path
 from decouple import config, Csv
 
@@ -66,10 +59,18 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['schoolone.localhost', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
 
 
-## REMOVE DUPLICATE MIDDLEWARE LIST
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
 
 ROOT_URLCONF = 'tenant_core.urls'
 
