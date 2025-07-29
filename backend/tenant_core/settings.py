@@ -34,7 +34,7 @@ TENANT_APPS = [
 INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))
 
 # django-tenants specific settings
-TENANT_MODEL = "core.Client"  # app_label.ModelName
+TENANT_MODEL = "core.Client"  
 TENANT_DOMAIN_MODEL = "core.Domain"
 
 MIDDLEWARE = [
