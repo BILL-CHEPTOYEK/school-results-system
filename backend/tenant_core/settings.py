@@ -7,6 +7,7 @@ DATABASE_ROUTERS = (
 # Shared apps (always present in public and tenant schemas)
 SHARED_APPS = [
     'django_tenants',
+    'corsheaders',
     'apps.core',  # core must be in both shared and tenant apps for tenant model
     'apps.users',
     'apps.students',
@@ -37,6 +38,7 @@ TENANT_MODEL = "core.Client"  # app_label.ModelName
 TENANT_DOMAIN_MODEL = "core.Domain"
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django_tenants.middleware.main.TenantMainMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -45,6 +47,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+# CORS settings for local frontend dev
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
 from pathlib import Path
 from decouple import config, Csv
