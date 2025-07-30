@@ -4,7 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Sidebar from './pages/Sidebar';
-import Navbar from './pages/Navbar';
+import CustomNavbar from './pages/Navbar';
 import Results from './pages/Results'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -25,14 +25,16 @@ function LoginWrapper({ onLogin }) {
 
 function AuthLayout({ onLogout }) {
   return (
-    <div className="d-flex">
-      <Sidebar />
-      <div className="flex-grow-1">
-        <Navbar onLogout={onLogout} />
-        {/* Main content area */}
-        <Outlet />
+    <>
+      <CustomNavbar />
+      <div className="d-flex" style={{ paddingTop: 70 }}>
+        <Sidebar style={{ marginTop: 0 }} />
+        <div className="flex-grow-1" style={{ minHeight: '100vh' }}>
+          {/* Main content area, already padded by navbar */}
+          <Outlet />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -64,8 +66,8 @@ export default function App() {
             <Route path="/profile" element={<Profile />} />
             {/* Add more authenticated routes here */}
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/results" element={<Results/>} />
-      </Route>
+            <Route path="/results" element={<Results />} />
+          </Route>
         ) : (
           <Route path="*" element={<Navigate to="/login" replace />} />
         )}

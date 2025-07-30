@@ -1,31 +1,59 @@
 // Sidebar.jsx
 import React from 'react';
 import { Nav } from 'react-bootstrap';
-import { FaUserShield, FaChartLine, FaSchool, FaEnvelope } from 'react-icons/fa';
+import { FaUserShield, FaChartLine, FaSchool } from 'react-icons/fa';
 import { HiOutlineMail } from 'react-icons/hi';
-import { Link } from 'react-router-dom';
-import api from '../services/api';
+import { NavLink } from 'react-router-dom';
 
 export default function Sidebar() {
-  const user = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('user'));
 
-  return (
-    <div className="left-0 p-4 sidebar bg-l"  >
-      <h4 className="p-4 mb-4 text-center " >Welcome, {user ? user.username : 'Guest'}</h4>
-      <Nav className="flex-column">
-        <Nav.Link as={Link} to="/dashboard" className="d-flex align-items-center">
-          <FaChartLine className="me-2" /> Dashboard
-        </Nav.Link>
-        <Nav.Link as={Link} to="/profile" className="d-flex align-items-center">
-          <FaUserShield className="me-2" /> Profile
-        </Nav.Link>
-        <Nav.Link as={Link} to="/results" className="d-flex align-items-center">
-          <FaSchool className="me-2" /> Results
-        </Nav.Link>
-        <Nav.Link as={Link} to="/contact" className="d-flex align-items-center">
-          <HiOutlineMail className="me-2" /> Contact Us
-        </Nav.Link>
-      </Nav>
-    </div>
-  );
+    return (
+        <aside
+            className="py-4 bg-white shadow-sm sidebar border-end rounded-end d-flex flex-column align-items-center"
+            style={{ minHeight: '100vh', width: 210 }}
+        >
+            <h5 className="mb-4 text-center fw-bold text-primary letter-spacing-1" style={{ letterSpacing: 1 }}>
+                Welcome, {user ? user.username : 'Guest'}
+            </h5>
+            <Nav className="gap-2 flex-column w-100">
+                <Nav.Link
+                    as={NavLink}
+                    to="/dashboard"
+                    className={({ isActive }) =>
+                        `d-flex align-items-center px-3 py-2 rounded transition${isActive ? ' bg-primary text-white fw-bold shadow-sm' : ' text-secondary'}`
+                    }
+                >
+                    <FaChartLine className="me-2" /> Dashboard
+                </Nav.Link>
+                <Nav.Link
+                    as={NavLink}
+                    to="/profile"
+                    className={({ isActive }) =>
+                        `d-flex align-items-center px-3 py-2 rounded transition${isActive ? ' bg-primary text-white fw-bold shadow-sm' : ' text-secondary'}`
+                    }
+                >
+                    <FaUserShield className="me-2" /> Profile
+                </Nav.Link>
+                <Nav.Link
+                    as={NavLink}
+                    to="/results"
+                    className={({ isActive }) =>
+                        `d-flex align-items-center px-3 py-2 rounded transition${isActive ? ' bg-primary text-white fw-bold shadow-sm' : ' text-secondary'}`
+                    }
+                >
+                    <FaSchool className="me-2" /> Results
+                </Nav.Link>
+                <Nav.Link
+                    as={NavLink}
+                    to="/contact"
+                    className={({ isActive }) =>
+                        `d-flex align-items-center px-3 py-2 rounded transition${isActive ? ' bg-primary text-white fw-bold shadow-sm' : ' text-secondary'}`
+                    }
+                >
+                    <HiOutlineMail className="me-2" /> Contact Us
+                </Nav.Link>
+            </Nav>
+        </aside>
+    );
 }
