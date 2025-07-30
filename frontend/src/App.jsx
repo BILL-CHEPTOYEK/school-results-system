@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'r
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Sidebar from './pages/Sidebar';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginWrapper onLogin={setToken} />} />
         <Route path="/dashboard" element={token ? <DashboardWrapper token={token} onLogout={handleLogout} /> : <Navigate to="/login" replace />} />
+        <Route path="/sidebar" element={<Sidebar />} />
       </Routes>
     </Router>
   );
