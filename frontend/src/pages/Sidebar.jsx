@@ -10,8 +10,8 @@ export default function Sidebar() {
   const user = JSON.parse(localStorage.getItem('user'));
 
   return (
-    <div className="p-3 sidebar bg-light">
-      <h4 className="mb-4 text-center">Welcome, {user ? user.username : 'Guest'}</h4>
+    <div className="left-0 p-4 sidebar bg-l"  >
+      <h4 className="p-4 mb-4 text-center " >Welcome, {user ? user.username : 'Guest'}</h4>
       <Nav className="flex-column">
         <Nav.Link as={Link} to="/dashboard" className="d-flex align-items-center">
           <FaChartLine className="me-2" /> Dashboard
