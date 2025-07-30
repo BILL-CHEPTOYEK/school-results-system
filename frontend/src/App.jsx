@@ -23,14 +23,28 @@ function LoginWrapper({ onLogin }) {
   }} />;
 }
 
+const SIDEBAR_WIDTH = 210;
+const NAVBAR_HEIGHT = 70;
+
 function AuthLayout({ onLogout }) {
   return (
     <>
       <CustomNavbar />
-      <div className="d-flex" style={{ paddingTop: 70 }}>
-        <Sidebar style={{ marginTop: 0 }} />
-        <div className="flex-grow-1" style={{ minHeight: '100vh' }}>
-          {/* Main content area, already padded by navbar */}
+      <div
+        className="d-flex"
+        style={{
+          paddingTop: NAVBAR_HEIGHT,
+        }}
+      >
+        <div style={{ width: SIDEBAR_WIDTH }} />
+        <div
+          className="flex-grow-1"
+          style={{
+            minHeight: '100vh',
+            paddingLeft: 0,
+            background: '#f8f9fa',
+          }}
+        >
           <Outlet />
         </div>
       </div>

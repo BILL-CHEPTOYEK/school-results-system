@@ -10,8 +10,16 @@ export default function Sidebar() {
 
     return (
         <aside
-            className="py-4 bg-white shadow-sm sidebar border-end rounded-end d-flex flex-column align-items-center"
-            style={{ minHeight: '100vh', width: 210 }}
+            className="top-0 bg-white shadow-sm sidebar border-end rounded-end d-flex flex-column align-items-center position-fixed"
+            style={{
+                minHeight: '100vh',
+                width: 210,
+                zIndex: 1030,
+                left: 0,
+                paddingTop: 70, // to account for fixed navbar height
+                overflowY: 'auto',
+                height: '100vh'
+            }}
         >
             <h5 className="mb-4 text-center fw-bold text-primary letter-spacing-1" style={{ letterSpacing: 1 }}>
                 Welcome, {user ? user.username : 'Guest'}
