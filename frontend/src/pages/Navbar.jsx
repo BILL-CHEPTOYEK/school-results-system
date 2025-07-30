@@ -27,7 +27,7 @@ export default function CustomNavbar() {
                 <span className="fw-bold fs-4 text-primary">School Results System</span>
             </BSNavbar.Brand>
             <Nav className="ms-auto">
-                <button className="btn btn-primary" onClick={onLogout}>
+                <button className="m-1 btn btn-primary" onClick={onLogout}>
                     <FaSignInAlt className="me-2" /> Logout
                 </button>
             </Nav>
