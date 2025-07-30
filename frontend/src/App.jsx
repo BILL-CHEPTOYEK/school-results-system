@@ -36,12 +36,14 @@ function AuthLayout({ onLogout }) {
           paddingTop: NAVBAR_HEIGHT,
         }}
       >
-        <div style={{ width: SIDEBAR_WIDTH }} />
+        <div style={{ width: SIDEBAR_WIDTH, position: 'fixed', top: NAVBAR_HEIGHT, left: 0, height: `calc(100vh - ${NAVBAR_HEIGHT}px)`, zIndex: 1030 }}>
+          <Sidebar />
+        </div>
         <div
           className="flex-grow-1"
           style={{
             minHeight: '100vh',
-            paddingLeft: 0,
+            paddingLeft: SIDEBAR_WIDTH,
             background: '#f8f9fa',
           }}
         >

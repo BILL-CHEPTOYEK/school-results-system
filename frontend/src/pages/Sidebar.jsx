@@ -5,20 +5,22 @@ import { FaUserShield, FaChartLine, FaSchool } from 'react-icons/fa';
 import { HiOutlineMail } from 'react-icons/hi';
 import { NavLink } from 'react-router-dom';
 
+const NAVBAR_HEIGHT = 70;
+
 export default function Sidebar() {
     const user = JSON.parse(localStorage.getItem('user'));
 
     return (
         <aside
-            className="top-0 bg-white shadow-sm sidebar border-end rounded-end d-flex flex-column align-items-center position-fixed"
+            className="p-3 bg-white shadow-sm sidebar border-end rounded-end d-flex flex-column align-items-center position-fixed"
             style={{
-                minHeight: '100vh',
+                minHeight: `calc(100vh - ${NAVBAR_HEIGHT}px)`,
                 width: 210,
                 zIndex: 1030,
                 left: 0,
-                paddingTop: 70, // to account for fixed navbar height
+                top: NAVBAR_HEIGHT,
                 overflowY: 'auto',
-                height: '100vh'
+                height: `calc(100vh - ${NAVBAR_HEIGHT}px)`
             }}
         >
             <h5 className="mb-4 text-center fw-bold text-primary letter-spacing-1" style={{ letterSpacing: 1 }}>
