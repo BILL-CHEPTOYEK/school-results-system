@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import api from '../services/api';
 import { FaUser, FaLock, FaArrowRight, FaSpinner, FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -16,12 +15,14 @@ export default function Login({ onLogin }) {
         setError('');
         try {
             const data = await api.post('/api/auth/token/', { username, password });
+            console.log('Login API response:', data);
             if (data.access) {
                 onLogin(data.access);
             } else {
-                setError(data.detail || 'Login failed');
+                setError(data.detail || 'Login failed (no access token)');
             }
         } catch (err) {
+            console.log('Login error:', err);
             setError(err.detail || 'Network error');
         }
         setLoading(false);
@@ -36,22 +37,22 @@ export default function Login({ onLogin }) {
             backgroundRepeat: 'no-repeat',
             backgroundAttachment: 'fixed',
         }}>
-            <div className="position-absolute top-0 start-0 w-100 h-100" style={{ background: 'rgba(30, 58, 138, 0.5)', backdropFilter: 'blur(2px)' }}></div>
+            <div className="top-0 position-absolute start-0 w-100 h-100" style={{ background: 'rgba(30, 58, 138, 0.5)', backdropFilter: 'blur(2px)' }}></div>
             <div className="position-relative z-1 w-100" style={{ maxWidth: 400 }}>
-                <div className="card shadow-lg border-0 rounded-4 p-4 p-md-5 bg-white bg-opacity-95">
-                    <div className="text-center mb-4">
-                        <div className="d-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle mx-auto mb-3" style={{ width: 60, height: 60 }}>
+                <div className="p-4 bg-white border-0 shadow-lg card rounded-4 p-md-5 bg-opacity-95">
+                    <div className="mb-4 text-center">
+                        <div className="mx-auto mb-3 d-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle" style={{ width: 60, height: 60 }}>
                             <FaUser size={32} className="text-primary" />
                         </div>
-                        <h2 className="fw-bold mb-1">Sign in</h2>
-                        <p className="text-muted mb-0">Access your results portal</p>
+                        <h2 className="mb-1 fw-bold">Sign in</h2>
+                        <p className="mb-0 text-muted">Access your results portal</p>
                     </div>
                     <form onSubmit={handleSubmit} autoComplete="off">
-                        {error && <div className="alert alert-danger text-center py-2 mb-3">{error}</div>}
+                        {error && <div className="py-2 mb-3 text-center alert alert-danger">{error}</div>}
                         <div className="mb-3">
                             <label className="form-label fw-semibold">Username</label>
                             <div className="input-group">
-                                <span className="input-group-text bg-white"><FaUser className="text-secondary" /></span>
+                                <span className="bg-white input-group-text"><FaUser className="text-secondary" /></span>
                                 <input
                                     type="text"
                                     value={username}
@@ -65,7 +66,7 @@ export default function Login({ onLogin }) {
                         <div className="mb-3">
                             <label className="form-label fw-semibold">Password</label>
                             <div className="input-group">
-                                <span className="input-group-text bg-white"><FaLock className="text-secondary" /></span>
+                                <span className="bg-white input-group-text"><FaLock className="text-secondary" /></span>
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
@@ -85,12 +86,12 @@ export default function Login({ onLogin }) {
                                 </button>
                             </div>
                         </div>
-                        <div className="d-flex justify-content-end mb-3">
+                        <div className="mb-3 d-flex justify-content-end">
                             <a href="#" className="text-primary text-decoration-none small">Forgot password?</a>
                         </div>
                         <button
                             type="submit"
-                            className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 fw-semibold"
+                            className="gap-2 btn btn-primary w-100 d-flex align-items-center justify-content-center fw-semibold"
                             disabled={loading}
                         >
                             {loading ? (
@@ -101,7 +102,7 @@ export default function Login({ onLogin }) {
                             {loading ? 'Signing in...' : 'Sign In'}
                         </button>
                     </form>
-                    <div className="text-center mt-4">
+                    <div className="mt-4 text-center">
                         <small className="text-muted">&copy; {new Date().getFullYear()} Your School Name. All rights reserved.</small>
                     </div>
                 </div>
