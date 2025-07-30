@@ -40,7 +40,7 @@ project-root/
 │   │   └── core/
 │   └── media/
 │
-├── frontend/                  # React fro        
+├── frontend/                  # React fron        
 │   └── ...
 │
 ├── docker-compose.yml
