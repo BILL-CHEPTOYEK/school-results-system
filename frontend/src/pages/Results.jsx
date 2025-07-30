@@ -29,9 +29,9 @@ export default function Results() {
     <div className="p-4">
       <h2 className="mb-4">Your Results</h2>
       <Nav className="flex-column">
-        <Nav.Link as={Link} to="/results" className="d-flex align-items-center">
+        {/* <Nav.Link as={Link} to="/results" className="d-flex align-items-center">
           <FaFileImport className="me-2" /> View Results
-        </Nav.Link>
+        </Nav.Link> */}
       </Nav>
       {/* Table of different classes */}
     </div>
