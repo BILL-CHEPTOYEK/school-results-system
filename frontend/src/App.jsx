@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate, Outlet } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Sidebar from './pages/Sidebar';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+// Example Profile page
+function Profile() {
+  return <div className="p-4"><h2>Profile</h2><p>This is your profile page.</p></div>;
+}
 
 function LoginWrapper({ onLogin }) {
   const navigate = useNavigate();
@@ -16,8 +21,20 @@ function LoginWrapper({ onLogin }) {
   }} />;
 }
 
-function DashboardWrapper({ token, onLogout }) {
-  return <Dashboard token={token} onLogout={onLogout} />;
+function AuthLayout({ onLogout }) {
+  return (
+    <div className="d-flex">
+      <Sidebar />
+      <div className="flex-grow-1">
+        {/* Navbar placeholder */}
+        <div className="px-4 py-2 mb-4 bg-white shadow-sm d-flex justify-content-between align-items-center">
+          <span className="fw-bold">School Results System</span>
+          <button className="btn btn-outline-danger btn-sm" onClick={onLogout}>Logout</button>
+        </div>
+        <Outlet />
+      </div>
+    </div>
+  );
 }
 
 export default function App() {
@@ -42,8 +59,16 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginWrapper onLogin={setToken} />} />
-        <Route path="/dashboard" element={token ? <DashboardWrapper token={token} onLogout={handleLogout} /> : <Navigate to="/login" replace />} />
-        <Route path="/sidebar" element={<Sidebar />} />
+        {token ? (
+          <Route element={<AuthLayout onLogout={handleLogout} />}>
+            <Route path="/dashboard" element={<Dashboard token={token} />} />
+            <Route path="/profile" element={<Profile />} />
+            {/* Add more authenticated routes here */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Route>
+        ) : (
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        )}
       </Routes>
     </Router>
   );
