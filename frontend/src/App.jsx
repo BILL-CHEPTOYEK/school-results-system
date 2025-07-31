@@ -7,6 +7,7 @@ import Sidebar from './pages/Sidebar';
 import CustomNavbar from './pages/Navbar';
 import Results from './pages/Results'
 import Students from './pages/Students';
+import Tenants from './pages/Tenants';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -71,6 +72,8 @@ export default function App() {
     toast.info('Logged out');
   };
 
+
+
   return (
     <Router>
       <ToastContainer position="top-center" autoClose={2000} />
@@ -82,9 +85,10 @@ export default function App() {
             <Route path="/dashboard" element={<Dashboard token={token} />} />
             <Route path="/profile" element={<Profile />} />
             {/* Add more authenticated routes here */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/tenants" element={<Tenants />} />
             <Route path="/results" element={<Results />} />
             <Route path="/students" element={<Students />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Route>
         ) : (
           <Route path="*" element={<Navigate to="/login" replace />} />

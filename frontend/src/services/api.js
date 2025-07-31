@@ -8,9 +8,11 @@ export function getToken() {
 
 export async function apiFetch(path, options = {}) {
     const token = getToken();
+    // Do not send Authorization header for public endpoints
+    const isPublic = path.startsWith('/api/tenants/');
     const headers = {
         'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(!isPublic && token ? { Authorization: `Bearer ${token}` } : {}),
         ...options.headers,
     };
     const response = await fetch(`${API_BASE}${path}`, {

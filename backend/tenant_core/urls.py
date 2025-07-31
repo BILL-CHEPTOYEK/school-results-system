@@ -27,6 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('apps.users.jwt_urls')),
     path('api/auth/', include('apps.users.password_urls')),
+    path('api/', include('apps.core.urls')),
     path('api/', include('apps.users.urls')),
     path('api/', include('apps.students.urls')),
     path('api/', include('apps.results.urls')),

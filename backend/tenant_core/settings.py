@@ -1,3 +1,8 @@
+# Custom authentication backend: allow public superadmin login everywhere
+AUTHENTICATION_BACKENDS = [
+    'apps.core.auth_backends.PublicSuperAdminFallbackBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 # django-tenants database router
 DATABASE_ROUTERS = (
     'django_tenants.routers.TenantSyncRouter',

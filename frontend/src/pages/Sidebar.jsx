@@ -38,6 +38,15 @@ export default function Sidebar() {
                 </Nav.Link>
                 <Nav.Link
                     as={NavLink}
+                    to="/tenants"
+                    className={({ isActive }) =>
+                        `d-flex align-items-center px-3 py-2 rounded transition${isActive ? ' bg-warning text-dark fw-bold shadow-sm' : ' text-secondary'}`
+                    }
+                >
+                    <FaSchool className="me-2" /> Schools
+                </Nav.Link>
+                <Nav.Link
+                    as={NavLink}
                     to="/students"
                     className={({ isActive }) =>
                         `d-flex align-items-center px-3 py-2 rounded transition${isActive ? ' bg-success text-white fw-bold shadow-sm' : ' text-secondary'}`
