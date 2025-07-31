@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Sidebar from './pages/Sidebar';
 import CustomNavbar from './pages/Navbar';
 import Results from './pages/Results'
+import Students from './pages/Students';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -83,6 +84,7 @@ export default function App() {
             {/* Add more authenticated routes here */}
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
             <Route path="/results" element={<Results />} />
+            <Route path="/students" element={<Students />} />
           </Route>
         ) : (
           <Route path="*" element={<Navigate to="/login" replace />} />

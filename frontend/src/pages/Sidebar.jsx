@@ -38,6 +38,15 @@ export default function Sidebar() {
                 </Nav.Link>
                 <Nav.Link
                     as={NavLink}
+                    to="/students"
+                    className={({ isActive }) =>
+                        `d-flex align-items-center px-3 py-2 rounded transition${isActive ? ' bg-success text-white fw-bold shadow-sm' : ' text-secondary'}`
+                    }
+                >
+                    <FaUserShield className="me-2" /> Students
+                </Nav.Link>
+                <Nav.Link
+                    as={NavLink}
                     to="/profile"
                     className={({ isActive }) =>
                         `d-flex align-items-center px-3 py-2 rounded transition${isActive ? ' bg-primary text-white fw-bold shadow-sm' : ' text-secondary'}`
