@@ -58,10 +58,9 @@ class TenantListCreateView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         data = serializer.validated_data
-        user = request.user
-        # Allow tenant creation from any schema if user is superuser, else only from public schema
-        if not (user.is_authenticated and user.is_superuser) and connection.schema_name != get_public_schema_name():
-            return Response({'detail': "Tenant creation only allowed from public schema unless you're a superadmin."}, status=403)
+        # Only allow tenant creation from public schema
+        if connection.schema_name != get_public_schema_name():
+            return Response({'detail': 'Tenant creation only allowed from public schema.'}, status=403)
         # Always create tenant in public schema
         with schema_context(get_public_schema_name()):
             tenant = Client(
