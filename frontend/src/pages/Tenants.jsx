@@ -28,7 +28,15 @@ export default function Tenants() {
         setLoading(true);
         try {
             const res = await api.get('/api/tenants/');
-            setTenants(res.data);
+            console.log('Fetched tenants:', res);
+            // Accept both array and object with data property
+            if (Array.isArray(res)) {
+                setTenants(res);
+            } else if (Array.isArray(res.data)) {
+                setTenants(res.data);
+            } else {
+                setTenants([]);
+            }
         } catch (err) {
             toast.error('Failed to fetch tenants');
         }
@@ -95,12 +103,12 @@ export default function Tenants() {
                         {Array.isArray(tenants) && tenants.length > 0 ? (
                             tenants.map(t => (
                                 <tr key={t.id}>
-                                    <td>{t.name || t.school_name}</td>
-                                    <td>{t.type || t.school_type}</td>
-                                    <td>{t.address || t.school_address}</td>
-                                    <td>{t.phone || t.school_phone}</td>
-                                    <td>{t.admin_name}</td>
-                                    <td>{t.admin_email}</td>
+                                    <td>{t.name || t.school_name || ''}</td>
+                                    <td>{t.school_type || t.type || ''}</td>
+                                    <td>{t.school_address || t.address || ''}</td>
+                                    <td>{t.school_phone || t.phone || ''}</td>
+                                    <td>{t.admin_name || ''}</td>
+                                    <td>{t.admin_email || ''}</td>
                                 </tr>
                             ))
                         ) : (

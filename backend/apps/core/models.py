@@ -11,6 +11,8 @@ class Client(TenantMixin):
     on_trial = models.BooleanField(default=True)
     created_on = models.DateField(auto_now_add=True)
 
+
+    admin = models.ForeignKey('users.User', null=True, blank=True, on_delete=models.SET_NULL, related_name='admin_clients')
     # default true, schema will be automatically created and synced when it is saved
     auto_create_schema = True
 

@@ -16,6 +16,19 @@ class TenantCreateSerializer(serializers.Serializer):
         pass
 
 class ClientListSerializer(serializers.ModelSerializer):
+    admin_name = serializers.SerializerMethodField()
+    admin_email = serializers.SerializerMethodField()
+
     class Meta:
         model = Client
-        fields = ["id", "name", "school_type", "school_address", "school_phone"]
+        fields = ["id", "name", "school_type", "school_address", "school_phone", "admin_name", "admin_email"]
+
+    def get_admin_name(self, obj):
+        if obj.admin:
+            return obj.admin.get_full_name() or obj.admin.username
+        return None
+
+    def get_admin_email(self, obj):
+        if obj.admin:
+            return obj.admin.email
+        return None

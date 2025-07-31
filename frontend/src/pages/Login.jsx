@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import api from '../services/api';
+import api, { setApiBase } from '../services/api';
 import { FaUser, FaLock, FaArrowRight, FaSpinner, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function Login({ onLogin }) {
@@ -17,6 +17,15 @@ export default function Login({ onLogin }) {
             const data = await api.post('/api/auth/token/', { username, password });
             console.log('Login API response:', data);
             if (data.access) {
+                // Handle redirect and API base logic
+                if (data.tenant_domain) {
+                    // Redirect to tenant domain
+                    window.location.href = `http://${data.tenant_domain}`;
+                    return;
+                } else if (data.is_superuser) {
+                    // Stay on public, set API base to public
+                    setApiBase(import.meta.env.VITE_API_BASE || 'http://localhost:8000');
+                }
                 onLogin(data.access);
             } else {
                 setError(data.detail || 'Login failed (no access token)');

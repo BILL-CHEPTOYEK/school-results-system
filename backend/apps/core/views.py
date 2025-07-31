@@ -63,12 +63,23 @@ class TenantListCreateView(APIView):
             return Response({'detail': 'Tenant creation only allowed from public schema.'}, status=403)
         # Always create tenant in public schema
         with schema_context(get_public_schema_name()):
+            # Create admin user in the public schema first (for FK)
+            admin_user = User.objects.create_user(
+                username=data['admin_email'],
+                email=data['admin_email'],
+                password=data['admin_password'],
+                first_name=data['admin_name'],
+            )
+            if hasattr(admin_user, 'phone'):
+                admin_user.phone = data.get('admin_phone', '')
+                admin_user.save()
             tenant = Client(
                 name=data['school_name'],
                 school_type=data['school_type'],
                 school_address=data['school_address'],
                 school_phone=data['school_phone'],
                 schema_name=data['school_name'].replace(' ', '').lower(),
+                admin=admin_user
             )
             tenant.save()
             from .models import Domain
@@ -77,7 +88,7 @@ class TenantListCreateView(APIView):
                 tenant=tenant,
                 is_primary=True
             )
-        # Create admin user in new tenant schema
+        # Create admin user in new tenant schema as superuser
         with schema_context(tenant.schema_name):
             admin = User.objects.create_superuser(
                 username=data['admin_email'],
