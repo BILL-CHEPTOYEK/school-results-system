@@ -57,14 +57,14 @@ export default function Students() {
 
     return (
         <div className="p-4">
-            <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="mb-4 d-flex justify-content-between align-items-center">
                 <h2>Your Students</h2>
                 <Button variant="success" onClick={() => setShowAdd(v => !v)}>
                     <FaPlus className="me-2" /> Add Student
                 </Button>
             </div>
             <Form.Group className="mb-4" controlId="classSelect">
-                <Form.Label>Select Class</Form.Label>
+                <Form.Label>Select Class/</Form.Label>
                 <Form.Select
                     value={selectedClass}
                     onChange={e => setSelectedClass(e.target.value)}
@@ -76,7 +76,7 @@ export default function Students() {
                 </Form.Select>
             </Form.Group>
             {showAdd && (
-                <Form onSubmit={handleAddStudent} className="mb-4 p-3 border rounded bg-light">
+                <Form onSubmit={handleAddStudent} className="p-3 mb-4 border rounded bg-light">
                     <Form.Group className="mb-2">
                         <Form.Label>Student Name</Form.Label>
                         <Form.Control
@@ -93,7 +93,7 @@ export default function Students() {
                 </Form>
             )}
             {loading ? (
-                <div className="text-center my-4"><Spinner animation="border" /></div>
+                <div className="my-4 text-center"><Spinner animation="border" /></div>
             ) : (
                 <Table striped bordered hover responsive className="bg-white">
                     <thead>
