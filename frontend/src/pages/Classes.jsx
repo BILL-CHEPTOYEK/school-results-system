@@ -18,7 +18,7 @@ export default function Classes() {
 
     const fetchClasses = () => {
         setLoading(true);
-        api.get("/classes/")
+        api.get("/api/classes/")
             .then(data => setClasses(data))
             .catch(() => setClasses([]))
             .finally(() => setLoading(false));
@@ -29,7 +29,7 @@ export default function Classes() {
         setAdding(true);
         setError("");
         try {
-            await api.post("/classes/", newClass);
+            await api.post("/api/classes/", newClass);
             setShowAdd(false);
             setNewClass({ name: "" });
             fetchClasses();
@@ -50,7 +50,7 @@ export default function Classes() {
         setAdding(true);
         setError("");
         try {
-            await api.put(`/classes/${editingId}/`, editClass);
+            await api.put(`/api/classes/${editingId}/`, editClass);
             setEditingId(null);
             setEditClass({ name: "" });
             fetchClasses();
@@ -61,11 +61,11 @@ export default function Classes() {
     };
 
     const handleDeleteClass = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this class?") ) return;
+        if (!window.confirm("Are you sure you want to delete this class?")) return;
         setAdding(true);
         setError("");
         try {
-            await api.delete(`/classes/${id}/`);
+            await api.delete(`/api/classes/${id}/`);
             fetchClasses();
         } catch (err) {
             setError("Failed to delete class.");

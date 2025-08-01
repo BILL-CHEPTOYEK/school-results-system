@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate, Outlet } from 'react-router-dom';
+import Classes from './pages/Classes.jsx';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -88,6 +89,7 @@ export default function App() {
             <Route path="/tenants" element={<Tenants />} />
             <Route path="/results" element={<Results />} />
             <Route path="/students" element={<Students />} />
+            <Route path="/classes" element={<Classes />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Route>
         ) : (

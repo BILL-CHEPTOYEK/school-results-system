@@ -32,6 +32,7 @@ TENANT_APPS = [
     'apps.results',
     'apps.reports',
     'apps.analytics',
+    'apps.classes',
     # Add other tenant-specific apps here
 ]
 
