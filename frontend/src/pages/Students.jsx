@@ -64,7 +64,7 @@ export default function Students() {
                 </Button>
             </div>
             <Form.Group className="mb-4" controlId="classSelect">
-                <Form.Label>Select Class/co</Form.Label>
+                <Form.Label>Select Class/cou</Form.Label>
                 <Form.Select
                     value={selectedClass}
                     onChange={e => setSelectedClass(e.target.value)}
