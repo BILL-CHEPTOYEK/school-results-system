@@ -15,6 +15,8 @@ export default function Students() {
     const [showAdd, setShowAdd] = useState(false);
     const [newStudent, setNewStudent] = useState({ name: "", class_id: "" });
     const [adding, setAdding] = useState(false);
+    const [editingId, setEditingId] = useState(null);
+    const [editStudent, setEditStudent] = useState({ name: "" });
 
     useEffect(() => {
         if (!user) {
@@ -51,6 +53,40 @@ export default function Students() {
             api.get(`/students/class/${selectedClass}`).then(data => setStudents(data));
         } catch (err) {
             setError("Failed to add student.");
+        }
+        setAdding(false);
+    };
+
+    const handleEditStudent = (student) => {
+        setEditingId(student.id);
+        setEditStudent({ name: student.name });
+        setError("");
+    };
+
+    const handleUpdateStudent = async (e) => {
+        e.preventDefault();
+        setAdding(true);
+        setError("");
+        try {
+            await api.put(`/students/${editingId}/`, { ...editStudent, class_id: selectedClass });
+            setEditingId(null);
+            setEditStudent({ name: "" });
+            api.get(`/students/class/${selectedClass}`).then(data => setStudents(data));
+        } catch (err) {
+            setError("Failed to update student.");
+        }
+        setAdding(false);
+    };
+
+    const handleDeleteStudent = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this student?")) return;
+        setAdding(true);
+        setError("");
+        try {
+            await api.delete(`/students/${id}/`);
+            api.get(`/students/class/${selectedClass}`).then(data => setStudents(data));
+        } catch (err) {
+            setError("Failed to delete student.");
         }
         setAdding(false);
     };
@@ -101,17 +137,51 @@ export default function Students() {
                             <th>#</th>
                             <th>Name</th>
                             <th>Class</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {students.length === 0 ? (
-                            <tr><td colSpan={3} className="text-center">No students found.</td></tr>
+                            <tr><td colSpan={4} className="text-center">No students found.</td></tr>
                         ) : (
                             students.map((student, idx) => (
                                 <tr key={student.id}>
                                     <td>{idx + 1}</td>
-                                    <td>{student.name}</td>
+                                    <td>
+                                        {editingId === student.id ? (
+                                            <Form onSubmit={handleUpdateStudent} className="d-flex align-items-center">
+                                                <Form.Control
+                                                    type="text"
+                                                    value={editStudent.name}
+                                                    onChange={e => setEditStudent(s => ({ ...s, name: e.target.value }))}
+                                                    required
+                                                    size="sm"
+                                                    className="me-2"
+                                                />
+                                                <Button type="submit" variant="primary" size="sm" disabled={adding}>
+                                                    Save
+                                                </Button>
+                                                <Button variant="secondary" size="sm" className="ms-2" onClick={() => setEditingId(null)}>
+                                                    Cancel
+                                                </Button>
+                                            </Form>
+                                        ) : (
+                                            student.name
+                                        )}
+                                    </td>
                                     <td>{student.class_name || ''}</td>
+                                    <td>
+                                        {editingId !== student.id && (
+                                            <>
+                                                <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleEditStudent(student)}>
+                                                    Edit
+                                                </Button>
+                                                <Button variant="outline-danger" size="sm" onClick={() => handleDeleteStudent(student.id)}>
+                                                    Delete
+                                                </Button>
+                                            </>
+                                        )}
+                                    </td>
                                 </tr>
                             ))
                         )}
