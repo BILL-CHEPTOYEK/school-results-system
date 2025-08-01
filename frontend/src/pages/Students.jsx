@@ -69,7 +69,7 @@ export default function Students() {
                     value={selectedClass}
                     onChange={e => setSelectedClass(e.target.value)}
                 >
-                    <option value="">-- Choose a class/cour --</option>
+                    <option value="">-- Choose a class/cours --</option>
                     {classes.map(cls => (
                         <option key={cls.id} value={cls.id}>{cls.name}</option>
                     ))}
