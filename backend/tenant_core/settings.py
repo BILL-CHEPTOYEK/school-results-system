@@ -1,51 +1,45 @@
-# Custom authentication backend: allow public superadmin login everywhere
-AUTHENTICATION_BACKENDS = [
-    'apps.core.auth_backends.PublicSuperAdminFallbackBackend',
-    'django.contrib.auth.backends.ModelBackend',
-]
-# django-tenants database router
-DATABASE_ROUTERS = (
-    'django_tenants.routers.TenantSyncRouter',
-)
-# django-tenants settings
+# backend/tenant_core/settings.py
+import os
+from pathlib import Path
+from dotenv import load_dotenv
 
-# Shared apps (always present in public and tenant schemas)
-SHARED_APPS = [
-    'django_tenants',
-    'corsheaders',
-    'apps.core',  # core must be in both shared and tenant apps for tenant model
-    'apps.users',
-    'apps.students',
-    'django.contrib.contenttypes',
+load_dotenv()
+
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
+
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-&-xb%$rema(tak^*kwb$s40e4zx^jt)m_3ky(8jn-t_m*9c2k)')
+
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
+
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
+
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.admin',
-]
 
-# Tenant-specific apps (only present in tenant schemas)
-TENANT_APPS = [
-    'apps.core',
+    'rest_framework',
+    'rest_framework_simplejwt',
+
     'apps.users',
+    'apps.schools',
     'apps.students',
-    'apps.results',
-    'apps.reports',
-    'apps.analytics',
-    'apps.classes',
-    # Add other tenant-specific apps here
+    'apps.core',
 ]
-
-# Combine for INSTALLED_APPS
-INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))
-
-# django-tenants specific settings
-TENANT_MODEL = "core.Client"  
-TENANT_DOMAIN_MODEL = "core.Domain"
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django_tenants.middleware.main.TenantMainMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,23 +48,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-# CORS settings for local frontend dev
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
-from pathlib import Path
-from decouple import config, Csv
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
-
-ALLOWED_HOSTS = ['schoolone.localhost', 'localhost', '127.0.0.1']
 
 ROOT_URLCONF = 'tenant_core.urls'
 
@@ -81,9 +58,10 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.messages',
             ],
         },
     },
@@ -91,48 +69,106 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'tenant_core.wsgi.application'
 
-# Database configuration
+
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
 DATABASES = {
     'default': {
-        'ENGINE': config('DB_ENGINE', default='django_tenants.postgresql_backend'),
-        'NAME': config('DB_NAME', default=BASE_DIR / 'db.sqlite3'),
-        'USER': config('DB_USER', default=''),
-        'PASSWORD': config('DB_PASSWORD', default=''),
-        'HOST': config('DB_HOST', default=''),
-        'PORT': config('DB_PORT', default=''),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
+
 # Password validation
+# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
+
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
 ]
 
+
 # Internationalization
+# https://docs.djangoproject.com/en/4.2/topics/i18n/
+
 LANGUAGE_CODE = 'en-us'
+
 TIME_ZONE = 'UTC'
+
 USE_I18N = True
+
 USE_TZ = True
 
-# Static files
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
+
 STATIC_URL = 'static/'
 
 # Default primary key field type
+# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Custom user model
 AUTH_USER_MODEL = 'users.User'
 
-# DRF and JWT Authentication
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-    ],
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+}
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=int(os.getenv('SIMPLE_JWT_ACCESS_TOKEN_LIFETIME_MINUTES', 60))),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=int(os.getenv('SIMPLE_JWT_REFRESH_TOKEN_LIFETIME_DAYS', 1))),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'UPDATE_LAST_LOGIN': False,
+
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'JWK_URL': None,
+    'LEEWAY': 0,
+
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+
+    'JTI_CLAIM': 'jti',
+
+    'SLIDING_TOKEN_REFR_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }

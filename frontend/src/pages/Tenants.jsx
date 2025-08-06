@@ -4,8 +4,8 @@ import TenantFormModal from './TenantFormModal';
 import api from '../services/api';
 import { toast } from 'react-toastify';
 
-export default function Tenants() {
-    const [tenants, setTenants] = useState([]);
+export default function Schools() {
+    const [schools, setSchools] = useState([]);
     const [loading, setLoading] = useState(true);
     const [form, setForm] = useState({
         school_name: '',
@@ -21,24 +21,24 @@ export default function Tenants() {
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
-        fetchTenants();
+        fetchSchools();
     }, []);
 
-    const fetchTenants = async () => {
+    const fetchSchools = async () => {
         setLoading(true);
         try {
-            const res = await api.get('/api/tenants/');
-            console.log('Fetched tenants:', res);
+            const res = await api.get('/api/schools/');
+            console.log('Fetched schools:', res);
             // Accept both array and object with data property
             if (Array.isArray(res)) {
-                setTenants(res);
+                setSchools(res);
             } else if (Array.isArray(res.data)) {
-                setTenants(res.data);
+                setSchools(res.data);
             } else {
-                setTenants([]);
+                setSchools([]);
             }
         } catch (err) {
-            toast.error('Failed to fetch tenants');
+            toast.error('Failed to fetch schools');
         }
         setLoading(false);
     };
@@ -51,8 +51,8 @@ export default function Tenants() {
         e.preventDefault();
         setSubmitting(true);
         try {
-            await api.post('/api/tenants/', form);
-            toast.success('Tenant created! Super admin will receive an email.');
+            await api.post('/api/schools/', form);
+            toast.success('School created successfully!');
             setForm({
                 school_name: '',
                 school_type: '',
@@ -64,17 +64,17 @@ export default function Tenants() {
                 admin_password: ''
             });
             setShowModal(false);
-            fetchTenants();
+            fetchSchools();
         } catch (err) {
-            toast.error('Failed to create tenant');
+            toast.error('Failed to create school');
         }
         setSubmitting(false);
     };
 
     return (
         <div className="container mt-4">
-            <h2>Tenants (Schools)</h2>
-            <p className="mb-3 text-muted">Register a new school and its superuser. The super admin will receive an email notification.</p>
+            <h2>Schools</h2>
+            <p className="mb-3 text-muted">Register a new school and its admin. Only superusers can create schools.</p>
             <Button variant="primary" className="mb-3" onClick={() => setShowModal(true)}>
                 Add School
             </Button>
@@ -86,7 +86,7 @@ export default function Tenants() {
                 onSubmit={handleSubmit}
                 submitting={submitting}
             />
-            <h4>All Tenants</h4>
+            <h4>All Schools</h4>
             {loading ? <Spinner /> : (
                 <Table bordered hover>
                     <thead>
@@ -100,20 +100,20 @@ export default function Tenants() {
                         </tr>
                     </thead>
                     <tbody>
-                        {Array.isArray(tenants) && tenants.length > 0 ? (
-                            tenants.map(t => (
-                                <tr key={t.id}>
-                                    <td>{t.name || t.school_name || ''}</td>
-                                    <td>{t.school_type || t.type || ''}</td>
-                                    <td>{t.school_address || t.address || ''}</td>
-                                    <td>{t.school_phone || t.phone || ''}</td>
-                                    <td>{t.admin_name || ''}</td>
-                                    <td>{t.admin_email || ''}</td>
+                        {Array.isArray(schools) && schools.length > 0 ? (
+                            schools.map(s => (
+                                <tr key={s.id}>
+                                    <td>{s.name || s.school_name || ''}</td>
+                                    <td>{s.school_type || s.type || ''}</td>
+                                    <td>{s.school_address || s.address || ''}</td>
+                                    <td>{s.school_phone || s.phone || ''}</td>
+                                    <td>{s.admin_name || ''}</td>
+                                    <td>{s.admin_email || ''}</td>
                                 </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="6" className="text-center text-muted">No tenants found.</td>
+                                <td colSpan="6" className="text-center text-muted">No schools found.</td>
                             </tr>
                         )}
                     </tbody>

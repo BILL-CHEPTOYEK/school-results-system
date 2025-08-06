@@ -1,24 +1,52 @@
-from django.contrib.auth.models import AbstractUser
+# backend/apps/users/models.py
+import uuid
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+# Import the School model from the schools app
+from apps.schools.models import School
 
 class Role(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    description = models.TextField(blank=True)
+    """
+    Defines dynamic roles within the system (e.g., 'School Admin', 'Teacher', 'Student').
+    Permissions for these roles will be managed dynamically via the frontend settings.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,
+                          help_text="Unique identifier for the role.")
+    name = models.CharField(max_length=100, unique=True,
+                            help_text="The name of the role (e.g., 'School Admin', 'Teacher', 'Student').")
+    description = models.TextField(blank=True,
+                                   help_text="A brief description of what this role entails.")
+
+    class Meta:
+        verbose_name_plural = "Roles" 
 
     def __str__(self):
         return self.name
 
 class User(AbstractUser):
-    roles = models.ManyToManyField('Role', through='UserRole', related_name='users', through_fields=('user', 'role'))
+    """
+    Custom User model extending Django's AbstractUser.
+    Includes fields to link users to their specific school and role,
+    and a flag for global super administrators.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,
+                          help_text="Unique identifier for the user.")
+    # Foreign Key to the School model: links a user to their specific school.
+    # SET_NULL is used so if a school is deleted, users are not deleted but become unassigned.
+    school = models.ForeignKey(School, on_delete=models.SET_NULL, null=True, blank=True,
+                               help_text="The school this user belongs to. Null for Super Admins or unassigned users.")
+    # Foreign Key to the Role model: defines the user's role within their school context.
+    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True,
+                             help_text="The role of the user within their school (e.g., Teacher, Student, School Admin).")
+    # Boolean flag to identify global super administrators.
+    # Super admins have access across all schools.
+    is_superadmin = models.BooleanField(default=False,
+                                        help_text="Designates whether this user has global super admin privileges across all schools.")
 
-class UserRole(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    role = models.ForeignKey(Role, on_delete=models.CASCADE)
-    assigned_by = models.ForeignKey(User, related_name='assigned_roles', on_delete=models.SET_NULL, null=True, blank=True)
-    assigned_at = models.DateTimeField(auto_now_add=True)
+    # You can add other custom fields here if needed, like phone_number, address, etc.
 
     class Meta:
-        unique_together = ('user', 'role')
+        # AbstractUser already enforces global uniqueness for 'username'.
+        pass
 
-    def __str__(self):
-        return f"{self.user.username} - {self.role.name}"
+    

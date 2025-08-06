@@ -1,35 +1,24 @@
 // src/services/api.js
 
-
-let API_BASE = import.meta.env.VITE_API_BASE || window.location.origin;
-
-export function setApiBase(url) {
-    API_BASE = url;
-}
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
 
 export function getToken() {
     return localStorage.getItem('token');
 }
 
-
 export async function apiFetch(path, options = {}) {
     const token = getToken();
-    // Always use public backend for tenant endpoints
-    const isTenantEndpoint = path.startsWith('/api/tenants/');
-    const base = isTenantEndpoint ? (import.meta.env.VITE_API_BASE || 'http://localhost:8000') : API_BASE;
     const headers = {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...options.headers,
     };
-    // For tenant endpoints, do not send Authorization header
-    if (isTenantEndpoint) {
-        delete headers['Authorization'];
-    }
-    const response = await fetch(`${base}${path}`, {
+
+    const response = await fetch(`${API_BASE}${path}`, {
         ...options,
         headers,
     });
+
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
         throw data;

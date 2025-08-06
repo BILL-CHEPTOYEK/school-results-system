@@ -1,97 +1,45 @@
+# backend/apps/users/views.py
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.decorators import action
-from .models import User, Role, UserRole
-from .permissions import Permission, UserPermission, RolePermission
-from .serializers import UserSerializer, RoleSerializer, UserRoleSerializer, PermissionSerializer, UserPermissionSerializer, RolePermissionSerializer
-from rest_framework import generics, permissions
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth import get_user_model
-from django.utils.http import urlsafe_base64_decode
-from rest_framework.response import Response
-from rest_framework import status
-from django.core.mail import send_mail
-from django.conf import settings
-from rest_framework.views import APIView
-
-User = get_user_model()
+from rest_framework.permissions import IsAuthenticated, AllowAny # Import permissions
+from rest_framework.decorators import action # For custom actions on ViewSets
+from .models import User, Role
+from .serializers import UserSerializer, RoleSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    """
+    API endpoint that allows Users to be viewed, created, updated, or deleted.
+    - Allows unauthenticated users to create new users (e.g., for registration).
+    - Requires authentication for all other actions (list, retrieve, update, delete).
+    """
+    queryset = User.objects.all() # Retrieve all User objects
+    serializer_class = UserSerializer # Use the UserSerializer for data conversion
 
-    @action(detail=True, methods=['post'])
-    def assign_role(self, request, pk=None):
-        user = self.get_object()
-        role_id = request.data.get('role_id')
-        assigned_by = request.user if request.user.is_authenticated else None
-        try:
-            role = Role.objects.get(id=role_id)
-            UserRole.objects.create(user=user, role=role, assigned_by=assigned_by)
-            return Response({'status': 'role assigned'})
-        except Role.DoesNotExist:
-            return Response({'error': 'Role not found'}, status=status.HTTP_400_BAD_REQUEST)
+    def get_permissions(self):
+        """
+        Custom permission logic for UserViewSet actions.
+        """
+        if self.action == 'create':
+            return [AllowAny()] # Allow anyone (authenticated or not) to create a user
+        return [IsAuthenticated()] # Require authentication for all other actions
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def me(self, request):
+        """
+        Custom endpoint to retrieve details of the currently authenticated user.
+        Accessible at /api/users/me/
+        """
+        # This check is mostly for clarity; IsAuthenticated permission_classes already handles it.
+        if request.user.is_authenticated:
+            serializer = self.get_serializer(request.user)
+            return Response(serializer.data)
+        return Response({"detail": "Not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
 
 class RoleViewSet(viewsets.ModelViewSet):
-    queryset = Role.objects.all()
-    serializer_class = RoleSerializer
-
-class PasswordResetRequestView(APIView):
-    permission_classes = [permissions.AllowAny]
-    def post(self, request):
-        email = request.data.get('email')
-        if not email:
-            return Response({'error': 'Email is required.'}, status=400)
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return Response({'error': 'User not found.'}, status=404)
-        token = default_token_generator.make_token(user)
-        uid = user.pk
-        # In production, send email with link containing uid and token
-        # For now, just return them
-        return Response({'uid': uid, 'token': token})
-
-class PasswordResetConfirmView(APIView):
-    permission_classes = [permissions.AllowAny]
-    def post(self, request):
-        uid = request.data.get('uid')
-        token = request.data.get('token')
-        new_password = request.data.get('new_password')
-        if not (uid and token and new_password):
-            return Response({'error': 'uid, token, and new_password are required.'}, status=400)
-        try:
-            user = User.objects.get(pk=uid)
-        except User.DoesNotExist:
-            return Response({'error': 'User not found.'}, status=404)
-        if not default_token_generator.check_token(user, token):
-            return Response({'error': 'Invalid token.'}, status=400)
-        user.set_password(new_password)
-        user.save()
-        return Response({'success': 'Password has been reset.'})
-
-class PasswordChangeView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    def post(self, request):
-        user = request.user
-        old_password = request.data.get('old_password')
-        new_password = request.data.get('new_password')
-        if not (old_password and new_password):
-            return Response({'error': 'old_password and new_password are required.'}, status=400)
-        if not user.check_password(old_password):
-            return Response({'error': 'Old password is incorrect.'}, status=400)
-        user.set_password(new_password)
-        user.save()
-        return Response({'success': 'Password changed successfully.'})
-
-class PermissionViewSet(viewsets.ModelViewSet):
-    queryset = Permission.objects.all()
-    serializer_class = PermissionSerializer
-
-class UserPermissionViewSet(viewsets.ModelViewSet):
-    queryset = UserPermission.objects.all()
-    serializer_class = UserPermissionSerializer
-
-class RolePermissionViewSet(viewsets.ModelViewSet):
-    queryset = RolePermission.objects.all()
-    serializer_class = RolePermissionSerializer
+    """
+    API endpoint that allows Roles to be viewed, created, updated, or deleted.
+    Initially, any authenticated user can access this.
+    """
+    queryset = Role.objects.all() # Retrieve all Role objects
+    serializer_class = RoleSerializer # Use the RoleSerializer for data conversion
+    permission_classes = [IsAuthenticated] # Require authentication for all actions

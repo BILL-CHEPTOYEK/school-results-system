@@ -1,6 +1,6 @@
-# backend/apps/core/apps.py
+# backend/apps/schools/apps.py
 from django.apps import AppConfig
 
-class CoreConfig(AppConfig):
+class SchoolsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.core' 
+    name = 'apps.schools'
