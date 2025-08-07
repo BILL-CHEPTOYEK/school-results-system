@@ -1,10 +1,38 @@
-# env 
 .env
-# Ignore environment variable files
-# These files contain sensitive information and should not be tracked by git
-# Uncomment the lines below to include your local environment settings
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-# Uncomment the lines below to include your production environment settings
+venv/
+*venv/
+*.env
+*.log
+*.sqlite3
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.db
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg-info/
+*.manifest
+*.spec
+*.mo
+*.pot
+*.py[cod]
+*.swp
+*.swo
+*.bak
+*.tmp
+*.orig
+*.DS_Store
+*.coverage
+.coverage.*
+*.pytest_cache/
+.cache
+*.mypy_cache/
+*.pylint.d/
+*.coverage
+*.hypothesis/
+*.tox/
+*.vscode/
