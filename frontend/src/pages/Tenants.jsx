@@ -8,14 +8,11 @@ export default function Schools() {
     const [schools, setSchools] = useState([]);
     const [loading, setLoading] = useState(true);
     const [form, setForm] = useState({
-        school_name: '',
-        school_type: '',
-        school_address: '',
-        school_phone: '',
-        admin_name: '',
-        admin_email: '',
-        admin_phone: '',
-        admin_password: ''
+        name: '',
+        email: '',
+        password: '',
+        address: '',
+        phone: ''
     });
     const [showModal, setShowModal] = useState(false);
     const [submitting, setSubmitting] = useState(false);
@@ -29,9 +26,11 @@ export default function Schools() {
         try {
             const res = await api.get('/api/schools/');
             console.log('Fetched schools:', res);
-            // Accept both array and object with data property
+            // Handle paginated response from Django REST Framework
             if (Array.isArray(res)) {
                 setSchools(res);
+            } else if (Array.isArray(res.results)) {
+                setSchools(res.results); // DRF pagination format
             } else if (Array.isArray(res.data)) {
                 setSchools(res.data);
             } else {
@@ -47,26 +46,65 @@ export default function Schools() {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
+    const handleEdit = (school) => {
+        setForm({
+            id: school.id,
+            name: school.name || '',
+            email: school.email || '',
+            password: '', // Don't populate password for security
+            address: school.address || '',
+            phone: school.phone || ''
+        });
+        setShowModal(true);
+    };
+
+    const handleSuspend = async (schoolId, currentStatus) => {
+        try {
+            await api.patch(`/api/schools/${schoolId}/`, {
+                is_active: !currentStatus
+            });
+            toast.success(`School ${!currentStatus ? 'activated' : 'suspended'} successfully!`);
+            fetchSchools();
+        } catch (err) {
+            toast.error('Failed to update school status');
+        }
+    };
+
+    const handleViewDetails = (school) => {
+        // For now, show an alert with school details
+        // Later this can navigate to a detailed view page
+        alert(`School Details:\n\nName: ${school.name}\nEmail: ${school.email}\nAddress: ${school.address}\nPhone: ${school.phone}\nStatus: ${school.is_active ? 'Active' : 'Suspended'}\nCreated: ${new Date(school.created_at).toLocaleDateString()}`);
+    };
+
     const handleSubmit = async e => {
         e.preventDefault();
         setSubmitting(true);
         try {
-            await api.post('/api/schools/', form);
-            toast.success('School created successfully!');
+            if (form.id) {
+                // Update existing school
+                const updateData = { ...form };
+                if (!updateData.password) {
+                    delete updateData.password; // Don't update password if empty
+                }
+                delete updateData.id;
+                await api.patch(`/api/schools/${form.id}/`, updateData);
+                toast.success('School updated successfully!');
+            } else {
+                // Create new school
+                await api.post('/api/schools/', form);
+                toast.success('School created successfully!');
+            }
             setForm({
-                school_name: '',
-                school_type: '',
-                school_address: '',
-                school_phone: '',
-                admin_name: '',
-                admin_email: '',
-                admin_phone: '',
-                admin_password: ''
+                name: '',
+                email: '',
+                password: '',
+                address: '',
+                phone: ''
             });
             setShowModal(false);
             fetchSchools();
         } catch (err) {
-            toast.error('Failed to create school');
+            toast.error(`Failed to ${form.id ? 'update' : 'create'} school`);
         }
         setSubmitting(false);
     };
@@ -74,17 +112,36 @@ export default function Schools() {
     return (
         <div className="container mt-4">
             <h2>Schools</h2>
-            <p className="mb-3 text-muted">Register a new school and its admin. Only superusers can create schools.</p>
-            <Button variant="primary" className="mb-3" onClick={() => setShowModal(true)}>
+            <p className="mb-3 text-muted">Manage schools in the system. Add new schools with email/password authentication.</p>
+            <Button variant="primary" className="mb-3" onClick={() => {
+                setForm({
+                    name: '',
+                    email: '',
+                    password: '',
+                    address: '',
+                    phone: ''
+                });
+                setShowModal(true);
+            }}>
                 Add School
             </Button>
             <TenantFormModal
                 show={showModal}
-                onHide={() => setShowModal(false)}
+                onHide={() => {
+                    setShowModal(false);
+                    setForm({
+                        name: '',
+                        email: '',
+                        password: '',
+                        address: '',
+                        phone: ''
+                    });
+                }}
                 form={form}
                 onChange={handleChange}
                 onSubmit={handleSubmit}
                 submitting={submitting}
+                isEdit={!!form.id}
             />
             <h4>All Schools</h4>
             {loading ? <Spinner /> : (
@@ -92,23 +149,51 @@ export default function Schools() {
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Type</th>
-                            <th>Address</th>
+                            <th>Email</th>
                             <th>Phone</th>
-                            <th>Admin Name</th>
-                            <th>Admin Email</th>
+                            <th>Address</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {Array.isArray(schools) && schools.length > 0 ? (
                             schools.map(s => (
                                 <tr key={s.id}>
-                                    <td>{s.name || s.school_name || ''}</td>
-                                    <td>{s.school_type || s.type || ''}</td>
-                                    <td>{s.school_address || s.address || ''}</td>
-                                    <td>{s.school_phone || s.phone || ''}</td>
-                                    <td>{s.admin_name || ''}</td>
-                                    <td>{s.admin_email || ''}</td>
+                                    <td>{s.name || ''}</td>
+                                    <td>{s.email || ''}</td>
+                                    <td>{s.phone || ''}</td>
+                                    <td>{s.address || ''}</td>
+                                    <td>
+                                        <span className={`badge ${s.is_active ? 'bg-success' : 'bg-danger'}`}>
+                                            {s.is_active ? 'Active' : 'Suspended'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <Button
+                                            variant="outline-primary"
+                                            size="sm"
+                                            className="me-2"
+                                            onClick={() => handleEdit(s)}
+                                        >
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            variant={s.is_active ? "outline-warning" : "outline-success"}
+                                            size="sm"
+                                            className="me-2"
+                                            onClick={() => handleSuspend(s.id, s.is_active)}
+                                        >
+                                            {s.is_active ? 'Suspend' : 'Activate'}
+                                        </Button>
+                                        <Button
+                                            variant="outline-info"
+                                            size="sm"
+                                            onClick={() => handleViewDetails(s)}
+                                        >
+                                            View Details
+                                        </Button>
+                                    </td>
                                 </tr>
                             ))
                         ) : (

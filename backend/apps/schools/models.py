@@ -1,25 +1,32 @@
 # backend/apps/schools/models.py
 import uuid
 from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
 
 class School(models.Model):
     """
-    Represents a single school (tenant) in the SaaS system.
-    All school-specific data will be linked to an instance of this model.
+    Model representing a School in the system.
+    Each school can have its own login credentials and manage their own data.
     """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,
-                          help_text="Unique identifier for the school.")
-    name = models.CharField(max_length=255, unique=True,
-                            help_text="The official name of the school.")
-    subdomain = models.CharField(max_length=100, unique=True, null=True, blank=True,
-                                 help_text="Optional subdomain for the school (e.g., 'springfield' for springfield.yoursaas.com).")
-    created_at = models.DateTimeField(auto_now_add=True,
-                                      help_text="Timestamp when the school record was created.")
-    updated_at = models.DateTimeField(auto_now=True,
-                                      help_text="Timestamp when the school record was last updated.")
+    name = models.CharField(max_length=200, help_text="Name of the school")
+    email = models.EmailField(unique=True, help_text="School's email address for login")
+    password = models.CharField(max_length=128, help_text="Hashed password for school login")
+    address = models.TextField(blank=True, null=True, help_text="School's physical address")
+    phone = models.CharField(max_length=20, blank=True, null=True, help_text="School's contact phone number")
+    is_active = models.BooleanField(default=True, help_text="Whether the school account is active")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name_plural = "Schools" # Correct plural name for Django Admin
+        verbose_name_plural = "Schools"
 
     def __str__(self):
         return self.name
+
+    def set_password(self, raw_password):
+        """Hash and set the password."""
+        self.password = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        """Check if the provided password matches the stored hash."""
+        return check_password(raw_password, self.password)

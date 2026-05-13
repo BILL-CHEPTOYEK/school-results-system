@@ -13,6 +13,8 @@ urlpatterns = [
     # JWT Authentication Endpoints
     # Users will POST their username/password here to get access and refresh tokens
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # Alternative endpoint for frontend compatibility
+    path('api/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair_alt'),
     # Users will POST their refresh token here to get a new access token
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
